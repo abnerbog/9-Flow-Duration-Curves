@@ -21,7 +21,7 @@ execute:
 ---
 
 
-# Flow Duration Curves {#fdcs}
+# Flow Duration Curves
 
 Get this document and a version with empty code chunks at the template repository on github: <https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves>
 
