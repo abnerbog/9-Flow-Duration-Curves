@@ -1,11 +1,27 @@
 ---
-title: "9 - Flow Duration Curves"
+title: "Chapter 9: Flow Duration Curves"
+date: today
+author:
+  - name: JP Gannon
+    orcid: 0000-0002-4595-3214
+    url: https://jpgannon.github.io/
+    affiliation: 
+      - name: Virginia Tech
+        url: https://www.vt.edu/
 format:
   html: 
     self-contained: true
+  ipynb:
+    nb-frontmatter: true
+    jupyter:
+      kernel: ir
+      ipynb-shell-interactivity: all
+execute: 
+  enabled: true
 ---
 
-# Flow Duration Curves {#fdcs}
+
+# Flow Duration Curves
 
 Get this document and a version with empty code chunks at the template repository on github: <https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves>
 
