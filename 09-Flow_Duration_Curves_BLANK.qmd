@@ -5,7 +5,8 @@ format:
     self-contained: true
 ---
 
-# Flow Duration Curves {#fdcs}
+
+# Flow Duration Curves
 
 Get this document and a version with empty code chunks at the template repository on github: <https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves>
 
@@ -13,14 +14,13 @@ Alright team. So far we have learned to wrangle data, make plots, and look at da
 
 We are on our way to doing analyses of extreme discharge events: low flow statistics and floods. But in order to do that, we need to understand a common way to look at data distributions in hydrology: the flow duration curve. As you'll see below, this is basically just a different way of looking at a pdf, and it can take some getting used to. But it is also a very useful tool!
 
-As always let's load the packages we will use: tidyverse, dataRetrieval, lubridate, and patchwork. Patchwork will help us make a multi-panel graph in the last part of the exercise.
+As always let's load the packages we will use: tidyverse, dataRetrieval, and patchwork. Patchwork will help us make a multi-panel graph in the last part of the exercise.
 
 We will also use theme_set() in this chunk so we don't have to change the ggplot theme every time we make a plot.
 
 ```{r}
 library(tidyverse)
 library(dataRetrieval)
-library(lubridate)
 library(patchwork)
 
 #set plot theme for the document so we 
@@ -35,6 +35,7 @@ To start, let's grab the USGS discharge data for the gage in Linville NC from 19
 We will download the data using USGS dataRetrieval and look at a line plot.
 
 ```{r}
+siteno <- "USGS-02138500" #Linville NC
 
 ```
 
@@ -42,13 +43,14 @@ We will download the data using USGS dataRetrieval and look at a line plot.
 
 Make a plot to view the distribution of the discharge data.
 
--   What is the median flow value?
--   What does this tell us about flow at that river?
--   How often is the river at or below that value?
--   Could you pick that number off the plot?
--   What about the flow the river is at or above only 5% of the time?
+* What is the median flow value? 
+* What does this tell us about flow at that river? 
+* How often is the river at or below that value? 
+* Could you pick that number off the plot? 
+* What about the flow the river is at or above only 5% of the time?
 
 ```{r}
+
 
 ```
 
@@ -74,15 +76,20 @@ We are going to calculate our own exceedence probabilities because knowing how t
 
 The formula for exceedence probability (P) is below. What do we need to calculate this?
 
-Exceedence probability (P), Probability a flow is equaled or exceeded
+Exceedence probability (P), Probability a flow is equaled or exceeded 
 
-$P = 100 * [M / (n + 1)]$
+$P = 100 * [M / (n + 1)]$ 
 
-M = Ranked position of the flow n = total number of observations in data record
+M = Ranked position of the flow 
+n = total number of observations in data record
 
-Here's a description of what we will do: \> Pass our Qdat data to mutate and create a new column that is equal to the ranks of the discharge column. \> Then pass that result to mutate again and create another column equal exceedence probability (P) \* 100, which will give us %.
+Here's a description of what we will do: 
+> Pass our Qdat data to mutate and create a new column that is equal to the ranks of the flow column. 
+> Then pass that result to mutate again and create another column equal exceedence probability (P) * 100, which will give us %.
 
 ```{r}
+#Flow is negative in rank() to make 
+#high flows ranked low (#1)
 
 ```
 
@@ -92,9 +99,15 @@ Now construct the following plot: A line with P on the x axis and flow on the y 
 
 That's a flow duration curve!
 
-Questions about the flow duration curve: \* How often is a flow of 100 cfs exceeded at this gage? \* Is flow more variable for flows exceeded 0-25% or of the time or 75-100% \* of the time? \* How can you tell? \* These data are daily observations. Given that, what is a more accurate name for the x axis? \* What would the X axis be called if we were using maximum yearly data?
+Questions about the flow duration curve: 
+* How often is a flow of 100 cfs exceeded at this gage? 
+* Is flow more variable for flows exceeded 0-25% or of the time or 75-100% * of the time? 
+* How can you tell? 
+* These data are daily observations. Given that, what is a more accurate name for the x axis?
+* What would the X axis be called if we were using maximum yearly data?
 
 ```{r}
+
 
 ```
 
@@ -122,6 +135,8 @@ Describe the differences in flow regime you see between the three periods of 196
 
 ```{r}
 
+
+
 ```
 
 ## Compare to a boxplot of the same data
@@ -143,5 +158,4 @@ How does the FDC show the differences you observed in the line plot?
 ```{r}
 
 ```
-
 That's it! Next we will apply some of these principles to look at low-flow statistics.
