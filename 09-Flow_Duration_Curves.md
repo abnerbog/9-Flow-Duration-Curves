@@ -1,6 +1,6 @@
 # Chapter 9: Flow Duration Curves
 JP Gannon
-2026-02-12
+2026-02-13
 
 # Flow Duration Curves
 
@@ -20,8 +20,8 @@ different way of looking at a pdf, and it can take some getting used to.
 But it is also a very useful tool!
 
 As always let’s load the packages we will use: tidyverse, dataRetrieval,
-lubridate, and patchwork. Patchwork will help us make a multi-panel
-graph in the last part of the exercise.
+and patchwork. Patchwork will help us make a multi-panel graph in the
+last part of the exercise.
 
 We will also use theme_set() in this chunk so we don’t have to change
 the ggplot theme every time we make a plot.
@@ -30,22 +30,12 @@ the ggplot theme every time we make a plot.
 library(tidyverse)
 ```
 
-    Warning: package 'tidyverse' was built under R version 4.3.3
-
-    Warning: package 'readr' was built under R version 4.3.3
-
-    Warning: package 'dplyr' was built under R version 4.3.3
-
-    Warning: package 'forcats' was built under R version 4.3.3
-
-    Warning: package 'lubridate' was built under R version 4.3.3
-
     ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ✔ ggplot2   4.0.0     ✔ tibble    3.2.1
-    ✔ lubridate 1.9.4     ✔ tidyr     1.3.0
-    ✔ purrr     1.0.2     
+    ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+    ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+    ✔ purrr     1.0.4     
     ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ✖ dplyr::filter() masks stats::filter()
     ✖ dplyr::lag()    masks stats::lag()
@@ -53,7 +43,11 @@ library(tidyverse)
 
 ``` r
 library(dataRetrieval)
-library(lubridate)
+```
+
+    Warning: package 'dataRetrieval' was built under R version 4.4.3
+
+``` r
 library(patchwork)
 
 #set plot theme for the document so we 
@@ -70,24 +64,31 @@ We will download the data using USGS dataRetrieval and look at a line
 plot.
 
 ``` r
-siteno <- "02138500" #Linville NC
+siteno <- "USGS-02138500" #Linville NC
 startDate <- "1960-01-01"
 endDate <- "2020-01-01"
 parameter <- "00060"
 
-Qdat <- readNWISdv(siteno, parameter, startDate, endDate) |> 
-  renameNWISColumns()
+times <- c(startDate, endDate)
+
+Qdat <- read_waterdata_daily(
+  monitoring_location_id = siteno,
+  parameter_code = parameter,
+  time = times, 
+  skipGeometry = TRUE
+)
 ```
 
-    Warning: NWIS servers are slated for decommission. Please begin to migrate to
-    read_waterdata_daily.
+    Requesting:
+    https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&monitoring_location_id=USGS-02138500&parameter_code=00060&time=1960-01-01%2F2020-01-01&limit=50000
 
-    GET: https://waterservices.usgs.gov/nwis/dv/?site=02138500&format=waterml%2C1.1&ParameterCd=00060&StatCd=00003&startDT=1960-01-01&endDT=2020-01-01
+    ⠙ Iterating 1 done (0.33/s) | 3s
 
 ``` r
 #Look at the data
-Qdat |> ggplot(aes(x = Date, y = Flow))+
-  geom_line()
+Qdat |> ggplot(aes(x = time, y = value))+
+  geom_line()+
+  ylab("Flow in CFS")
 ```
 
 ![](09-Flow_Duration_Curves_files/figure-commonmark/unnamed-chunk-2-1.png)
@@ -103,10 +104,10 @@ Make a plot to view the distribution of the discharge data.
 - What about the flow the river is at or above only 5% of the time?
 
 ``` r
-Qdat |> ggplot(aes(Flow))+
+Qdat |> ggplot(aes(value))+
   stat_density()+
   scale_x_log10()+
-  geom_vline(xintercept = median(Qdat$Flow), color = "red")
+  geom_vline(xintercept = median(Qdat$value), color = "red")
 ```
 
 ![](09-Flow_Duration_Curves_files/figure-commonmark/unnamed-chunk-3-1.png)
@@ -127,11 +128,12 @@ river is at or above only 25% of the time? Think carefully about what
 the y axis of the ECDF means.
 
 ``` r
-Qdat |> ggplot(aes(Flow))+
+Qdat |> ggplot(aes(value))+
   stat_ecdf()+
   scale_x_log10()+
-  geom_vline(xintercept = median(Qdat$Flow), color = "red")+
-  geom_vline(xintercept = quantile(Qdat$Flow)[4], color = "blue")
+  xlab("Flow in CFS")+
+  geom_vline(xintercept = median(Qdat$value), color = "red")+
+  geom_vline(xintercept = quantile(Qdat$value)[4], color = "blue")
 ```
 
 ![](09-Flow_Duration_Curves_files/figure-commonmark/unnamed-chunk-4-1.png)
@@ -162,16 +164,16 @@ M = Ranked position of the flow n = total number of observations in data
 record
 
 Here’s a description of what we will do: \> Pass our Qdat data to mutate
-and create a new column that is equal to the ranks of the discharge
-column. \> Then pass that result to mutate again and create another
-column equal exceedence probability (P) \* 100, which will give us %.
+and create a new column that is equal to the ranks of the flow column.
+\> Then pass that result to mutate again and create another column equal
+exceedence probability (P) \* 100, which will give us %.
 
 ``` r
 #Flow is negative in rank() to make 
 #high flows ranked low (#1)
 Qdat <- Qdat |>
-  mutate(rank = rank(-Flow)) |>
-  mutate(P = 100 * (rank / (length(Flow) + 1)))
+  mutate(rank = rank(-value)) |>
+  mutate(P = 100 * (rank / (length(value) + 1)))
 ```
 
 ## Plot a Flow Duration Curve using the probabilities
@@ -190,7 +192,7 @@ name for the x axis? \* What would the X axis be called if we were using
 maximum yearly data?
 
 ``` r
-Qdat |> ggplot(aes(x = P, y = Flow))+
+Qdat |> ggplot(aes(x = P, y = value))+
   geom_line()+
   scale_y_log10()+
   xlab("% Time flow equalled or exceeded")+
@@ -210,7 +212,7 @@ with scale_y_reverse and flip the axes (change the x to y and the y to
 x) with coord_flip()
 
 ``` r
-Qdat |> ggplot(aes(Flow))+
+Qdat |> ggplot(aes(value))+
   stat_ecdf()+
   scale_x_log10()+
   scale_y_reverse()+
@@ -249,17 +251,17 @@ periods of 1960-1980, 1980-2000, and 2000-2020.
 
 ``` r
 Qdat <- Qdat |>
-  mutate(year = year(Date)) |>
+  mutate(year = year(time)) |>
   mutate(period = case_when( year <= 1980 ~ "1960-1980",
                              year > 1980 & year <= 2000 ~ "1980-2000",
                              year > 2000 ~ "2000-2020"))
 
 Qdat <- Qdat |>
   group_by(period) |>
-  mutate(rank = rank(-Flow)) |> 
-  mutate(P = 100 * (rank / (length(Flow) + 1)))
+  mutate(rank = rank(-value)) |> 
+  mutate(P = 100 * (rank / (length(value) + 1)))
 
-Qdat |> ggplot(aes(x = P, y = Flow, color = period))+
+Qdat |> ggplot(aes(x = P, y = value, color = period))+
   geom_line()+
   scale_y_log10()+
   xlab("% Time flow equalled or exceeded")+
@@ -280,8 +282,9 @@ What are the advantages/disadvantages of the flow duration curves
 vs. boxplots?
 
 ``` r
-Qdat |> ggplot(aes(x = period, y = Flow)) +
+Qdat |> ggplot(aes(x = period, y = value)) +
   geom_boxplot()+
+  ylab("Flow in CFS")+
   scale_y_log10()
 ```
 
@@ -299,32 +302,35 @@ curves to examine the differences in discharge for the periods: 1905 -
 How does the FDC show the differences you observed in the line plot?
 
 ``` r
-siteid <- "09521000"
+siteid <- "USGS-09521000"
 startDate <- "1905-10-01"
 endDate <- "1965-10-01"
 parameter <- "00060"
 
-WS <- readNWISdv(siteid, parameter, startDate, endDate) |> 
-  renameNWISColumns() |>
-  mutate(year = year(Date)) |>
+times <- c(startDate, endDate)
+
+WS <- read_waterdata_daily(
+  monitoring_location_id = siteid,
+  parameter_code = parameter,
+  time = times, 
+  skipGeometry = TRUE) |>
+  mutate(year = year(time)) |>
   mutate(period = case_when( year <= 1936 ~ "Pre Dam",
                              year > 1936  ~ "Post Dam")) |>
   group_by(period) |>
-  mutate(rank = rank(-Flow)) |> 
-  mutate(P = 100 * (rank / (length(Flow) + 1)))
+  mutate(rank = rank(-value)) |> 
+  mutate(P = 100 * (rank / (length(value) + 1)))
 ```
 
-    Warning: NWIS servers are slated for decommission. Please begin to migrate to
-    read_waterdata_daily.
-
-    GET: https://waterservices.usgs.gov/nwis/dv/?site=09521000&format=waterml%2C1.1&ParameterCd=00060&StatCd=00003&startDT=1905-10-01&endDT=1965-10-01
+    Requesting:
+    https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&monitoring_location_id=USGS-09521000&parameter_code=00060&time=1905-10-01%2F1965-10-01&limit=50000
 
 ``` r
-flow <- ggplot(WS, aes(Date, Flow, color = period))+
+flow <- ggplot(WS, aes(time, value, color = period))+
   geom_line()+
   ylab("Q (cfs)")
 
-fdc <- WS |> ggplot(aes(x = P, y = Flow, color = period))+
+fdc <- WS |> ggplot(aes(x = P, y = value, color = period))+
   geom_line()+
   #scale_y_log10()+
   xlab("% Time flow equalled or exceeded")+
