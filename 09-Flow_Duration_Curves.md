@@ -1,6 +1,11 @@
-# Chapter 9: Flow Duration Curves
-JP Gannon
-2026-02-13
+---
+title: 'Chapter 9: Flow Duration Curves'
+date: 2026-03-23T00:00:00.000Z
+authors:
+  - id: jpgannon
+github: https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves
+---
+
 
 # Flow Duration Curves
 
@@ -30,12 +35,22 @@ the ggplot theme every time we make a plot.
 library(tidyverse)
 ```
 
+    Warning: package 'tidyverse' was built under R version 4.3.3
+
+    Warning: package 'readr' was built under R version 4.3.3
+
+    Warning: package 'dplyr' was built under R version 4.3.3
+
+    Warning: package 'forcats' was built under R version 4.3.3
+
+    Warning: package 'lubridate' was built under R version 4.3.3
+
     ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-    ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ✔ purrr     1.0.4     
+    ✔ ggplot2   4.0.0     ✔ tibble    3.2.1
+    ✔ lubridate 1.9.4     ✔ tidyr     1.3.0
+    ✔ purrr     1.0.2     
     ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ✖ dplyr::filter() masks stats::filter()
     ✖ dplyr::lag()    masks stats::lag()
@@ -43,11 +58,6 @@ library(tidyverse)
 
 ``` r
 library(dataRetrieval)
-```
-
-    Warning: package 'dataRetrieval' was built under R version 4.4.3
-
-``` r
 library(patchwork)
 
 #set plot theme for the document so we 
@@ -80,9 +90,15 @@ Qdat <- read_waterdata_daily(
 ```
 
     Requesting:
-    https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&monitoring_location_id=USGS-02138500&parameter_code=00060&time=1960-01-01%2F2020-01-01&limit=50000
+    https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&limit=10000&monitoring_location_id=USGS-02138500&parameter_code=00060&time=1960-01-01%2F2020-01-01
 
-    ⠙ Iterating 1 done (0.33/s) | 3s
+    ⠙ Iterating 1 done (0.23/s) | 4.4s
+
+    ⠹ Iterating 2 done (0.22/s) | 8.9s
+
+    ⠸ Iterating 3 done (0.15/s) | 19.4s
+
+    ⠼ Iterating 4 done (0.18/s) | 21.8s
 
 ``` r
 #Look at the data
@@ -323,7 +339,13 @@ WS <- read_waterdata_daily(
 ```
 
     Requesting:
-    https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&monitoring_location_id=USGS-09521000&parameter_code=00060&time=1905-10-01%2F1965-10-01&limit=50000
+    https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&limit=10000&monitoring_location_id=USGS-09521000&parameter_code=00060&time=1905-10-01%2F1965-10-01
+
+    ⠙ Iterating 1 done (0.21/s) | 4.8s
+
+    ⠹ Iterating 2 done (0.18/s) | 11s
+
+    ⠹ Iterating 3 done (0.23/s) | 13.1s
 
 ``` r
 flow <- ggplot(WS, aes(time, value, color = period))+

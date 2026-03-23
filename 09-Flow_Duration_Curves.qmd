@@ -1,10 +1,9 @@
 ---
 title: "Chapter 9: Flow Duration Curves"
-date: today
-author: JP Gannon
-format: gfm
-execute:
-  enabled: true
+date: 2026-03-23
+authors:
+  - id: jpgannon
+github: https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves
 ---
 
 # Flow Duration Curves
