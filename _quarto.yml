@@ -1,0 +1,9 @@
+project:
+  type: default
+
+format:
+  gfm:
+    variant: +yaml_metadata_block
+
+execute:
+  enabled: true
