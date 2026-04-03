@@ -3,7 +3,27 @@ title: 'Chapter 9: Flow Duration Curves'
 date: 2026-03-23T00:00:00.000Z
 authors:
   - id: jpgannon
+    name: JP Gannon
+    email: jpgannon@vt.edu
+    github: jpgannon
+    orcid: 0000-0002-4595-3214
+    corresponding: true
+    url: https://jpgannon.github.io/
+    affiliations:
+      - vt-tech
+affiliations:
+  - id: vt-tech
+    name: Virginia Tech
+    url: https://www.vt.edu/
+subject: Courseware
+doi: https://doi.org/10.4211/hs.11e2dd343f6f4cf7bc37b29392622b11
+venue:
+  title: View Resource on HydroShare
+  url: https://hydroshare.org/resource/11e2dd343f6f4cf7bc37b29392622b11/
 github: https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves
+downloads:
+  - file: 09-Flow_Duration_Curves.md
+  - file: 09-Flow_Duration_Curves.pdf
 ---
 
 
@@ -92,13 +112,13 @@ Qdat <- read_waterdata_daily(
     Requesting:
     https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&limit=10000&monitoring_location_id=USGS-02138500&parameter_code=00060&time=1960-01-01%2F2020-01-01
 
-    ⠙ Iterating 1 done (0.23/s) | 4.4s
+    ⠙ Iterating 1 done (0.49/s) | 2s
 
-    ⠹ Iterating 2 done (0.22/s) | 8.9s
+    ⠹ Iterating 2 done (0.47/s) | 4.2s
 
-    ⠸ Iterating 3 done (0.15/s) | 19.4s
+    ⠸ Iterating 3 done (0.45/s) | 6.7s
 
-    ⠼ Iterating 4 done (0.18/s) | 21.8s
+    ⠸ Iterating 4 done (0.48/s) | 8.3s
 
 ``` r
 #Look at the data
@@ -341,11 +361,9 @@ WS <- read_waterdata_daily(
     Requesting:
     https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?f=json&lang=en-US&skipGeometry=TRUE&limit=10000&monitoring_location_id=USGS-09521000&parameter_code=00060&time=1905-10-01%2F1965-10-01
 
-    ⠙ Iterating 1 done (0.21/s) | 4.8s
+    ⠙ Iterating 2 done (0.68/s) | 2.9s
 
-    ⠹ Iterating 2 done (0.18/s) | 11s
-
-    ⠹ Iterating 3 done (0.23/s) | 13.1s
+    ⠹ Iterating 3 done (0.74/s) | 4s
 
 ``` r
 flow <- ggplot(WS, aes(time, value, color = period))+

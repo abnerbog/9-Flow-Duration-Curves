@@ -4,6 +4,10 @@ project:
 format:
   gfm:
     variant: +yaml_metadata_block
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
 
 execute:
   enabled: true

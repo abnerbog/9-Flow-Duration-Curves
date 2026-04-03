@@ -3,7 +3,27 @@ title: "Chapter 9: Flow Duration Curves"
 date: 2026-03-23
 authors:
   - id: jpgannon
+    name: JP Gannon
+    email: jpgannon@vt.edu
+    github: jpgannon
+    orcid: 0000-0002-4595-3214
+    corresponding: true
+    url: https://jpgannon.github.io/
+    affiliations:
+      - vt-tech
+affiliations:
+  - id: vt-tech
+    name: Virginia Tech
+    url: https://www.vt.edu/
+subject: Courseware
+doi: https://doi.org/10.4211/hs.11e2dd343f6f4cf7bc37b29392622b11
+venue:
+  title: View Resource on HydroShare
+  url: https://hydroshare.org/resource/11e2dd343f6f4cf7bc37b29392622b11/
 github: https://github.com/VT-Hydroinformatics/9-Flow-Duration-Curves
+downloads:
+  - file: 09-Flow_Duration_Curves.md
+  - file: 09-Flow_Duration_Curves.pdf
 ---
 
 # Flow Duration Curves
